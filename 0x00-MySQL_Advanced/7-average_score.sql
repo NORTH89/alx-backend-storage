@@ -1,20 +1,22 @@
---sorted preceure
--- that computes averag...
+-- Drop the stored procedure if it exists
+DROP PROCEDURE IF EXISTS ComputeAverageScoreForUser;
 
 DELIMITER //
 
-CREATE PROCEDURE ComputeAverageScoreForUser(
-  IN user_id INT
-)
+-- Create the stored procedure
+CREATE PROCEDURE ComputeAverageScoreForUser(IN user_id INT)
 BEGIN
-  -- Update user's average score
-  UPDATE users
-  SET average_score = (
-    SELECT AVG(score)
+    DECLARE avg_score FLOAT;
+    
+    -- Compute the average score for the given user_id
+    SELECT AVG(score) INTO avg_score
     FROM corrections
-    WHERE user_id = users.id
-  )
-  WHERE users.id = user_id;
+    WHERE user_id = user_id;
+
+    -- Update the average_score in the users table
+    UPDATE users
+    SET average_score = avg_score
+    WHERE id = user_id;
 END //
 
 DELIMITER ;
